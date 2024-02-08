@@ -73,4 +73,22 @@ class SmsClientTest extends TestCase
 
         parent::tearDown();
     }
+
+    /**
+     * Successful delivery
+     */
+    public function testSuccessfullDelivery()
+    {
+        
+        $client = new SmsClient(
+            new Configuration(
+                getenv('NX_GOOD_USER'),
+                getenv('NX_PWD'),
+                getenv('NX_SENDERID'),
+            )
+        );
+        $response = $client->send(getenv('NX_GOOD_NUM'), 'Hello World');
+
+        $this->assertTrue($response);
+    }
 }
