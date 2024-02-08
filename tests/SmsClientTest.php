@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class SmsClientTest extends TestCase
 {
+
+    protected $fichierLog = __DIR__ . '/logs.log';
+
     /**
      * An exception must be raised when the user enters an incorrect username or password.
      */
@@ -42,5 +45,32 @@ class SmsClientTest extends TestCase
         $client->send(getenv('NX_BAD_NUM'), 'Hello World');
     }
 
-    
+     /**
+     * The log file must be generated if defined
+     */
+    public function testGeneratedLogFile()
+    {
+        $this->expectException(SendingFailureException::class);
+
+        $client = new SmsClient(
+            new Configuration(
+                getenv('NX_GOOD_USER'),
+                getenv('NX_PWD'),
+                getenv('NX_SENDERID'),
+                $this->fichierLog
+            )
+        );
+        $client->send(getenv('NX_BAD_NUM'), 'Hello World');
+        $this->assertFileExists($this->fichierLog);
+        
+    }
+
+    protected function tearDown(): void {
+        // Supprime le fichier à la fin du test
+        if (file_exists($this->fichierLog)) {
+            unlink($this->fichierLog);
+        }
+
+        parent::tearDown();
+    }
 }
