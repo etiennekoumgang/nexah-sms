@@ -23,4 +23,9 @@ interface ConfigInterface
      * Sender ID
      */
     public function getSenderId(): string;
+
+    /**
+     * Get the Nexah url endpoint
+     */
+    public function getBalanceUrl(): string;
 }

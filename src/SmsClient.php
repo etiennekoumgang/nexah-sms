@@ -34,4 +34,9 @@ class SmsClient
     {
         return $this->sender->send($number, $message);
     }
+
+    public function getBalance(): string
+    {
+        return $this->sender->getBalance();
+    }
 }

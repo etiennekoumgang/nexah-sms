@@ -51,7 +51,6 @@ class SenderService
             ]
         );
         $response_content = $response->toArray(false);
-
         $this->throwAuthErrorIfNeeded($response_content);
         $this->throwSmsErrorIfNeeded($response_content);
         
@@ -89,4 +88,28 @@ class SenderService
         return $this->nums_error;
     }
 
+    public function getBalance(): string
+    {
+     
+        $response = $this->httpClient->request(
+            'POST',
+            $this->config->getBalanceUrl(),
+            [
+                'json' => [
+                    "user" => $this->config->getUsername(),
+                    "password" => $this->config->getPassword()
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ],
+            ]
+        );
+
+        $response_content = $response->toArray(false);
+        $this->throwAuthErrorIfNeeded($response_content);
+
+        $this->logger->info("Get SMS balance");
+        return (string) $response_content['credit'];
+    }
 }
