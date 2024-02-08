@@ -8,14 +8,14 @@ class Configuration implements ConfigInterface
     private string $username;
     private string $password;
     private string $senderId;
-    private string $logfile;
+    private ?string $logfile;
     private string $balanceUrl;
 
     public function __construct(
         string $username,
         string $password,
         string $senderId,
-        string $logfile = null,
+        ?string $logfile = null,
         string $url = 'https://smsvas.com/bulk/public/index.php/api/v1/sendsms',
         string $balanceUrl = 'https://smsvas.com/bulk/public/index.php/api/v1/smscredit'
     ) {

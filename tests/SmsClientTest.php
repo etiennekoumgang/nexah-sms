@@ -91,4 +91,22 @@ class SmsClientTest extends TestCase
 
         $this->assertTrue($response);
     }
+
+     /**
+     * Get SMS balance
+     */
+    public function testGetBalanc()
+    {
+        
+        $client = new SmsClient(
+            new Configuration(
+                getenv('NX_GOOD_USER'),
+                getenv('NX_PWD'),
+                getenv('NX_SENDERID'),
+            )
+        );
+        $response = $client->getBalance();
+
+        $this->assertIsString($response);
+    }
 }
