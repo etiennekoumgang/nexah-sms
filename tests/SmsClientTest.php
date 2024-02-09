@@ -95,7 +95,7 @@ class SmsClientTest extends TestCase
      /**
      * Get SMS balance
      */
-    public function testGetBalanc()
+    public function testGetBalance()
     {
         
         $client = new SmsClient(
