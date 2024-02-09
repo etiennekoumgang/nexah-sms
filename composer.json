@@ -2,6 +2,7 @@
     "name": "gladdle/nexah-sms",
     "description": "A php library for sending SMS to one or more phone numbers using the Nexah API",
     "keywords": ["sms", "nexah"],
+    "homepage": "https://github.com/etiennekoumgang/nexah-sms",
     "type": "library",
     "license": "MIT",
     "autoload": {
