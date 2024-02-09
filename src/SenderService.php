@@ -142,14 +142,14 @@ class SenderService
          */
         $filterCallback = function ($item) {
             if ($item['status'] == "error") {
-                return $item['mobileno'];
+                return (string) $item['mobileno'];
             }
         };
         /**
          * @var string[]
          */
-        $sms_errors = array_filter($sms, $filterCallback);
-
+        $sms_errors = array_map($filterCallback, $sms);
+        
         if (sizeof($sms_errors) > 0) {
             $this->nums_error = $sms_errors;
             $this->logger->error('Failure to send messages to certain numbers');
