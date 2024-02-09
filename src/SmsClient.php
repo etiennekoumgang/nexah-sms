@@ -44,4 +44,12 @@ class SmsClient
     {
         return $this->config;
     }
+
+    /**
+     * @return string[]
+     */
+    public function getInvalidNumbers(): array
+    {
+        return $this->sender->getNumsError();
+    }
 }
