@@ -12,6 +12,9 @@ class SenderService
     private HttpClientInterface $httpClient;
     private ConfigInterface $config;
     private LoggerInterface $logger;
+    /**
+     * @var string[]
+     */
     private array $nums_error = [];
 
     public function __construct(
@@ -50,14 +53,44 @@ class SenderService
                 ],
             ]
         );
+        /**
+         * @var array{
+         *     "responsecode": int,
+         *     "responsedescription": string,
+         *     "responsemessage": string,
+         *     "sms": array{
+         *         "messageid": string,
+         *         "smsclientid": string,
+         *         "mobileno": string,
+         *         "status": string,
+         *         "errorcode": string,
+         *         "errordescription": string
+         *     }[]
+         * }
+         */
         $response_content = $response->toArray(false);
         $this->throwAuthErrorIfNeeded($response_content);
         $this->throwSmsErrorIfNeeded($response_content);
-        
+
         $this->logger->info("Sending SMS");
         return true;
     }
 
+    /**
+     * @param array{
+     *     "responsecode": int,
+     *     "responsedescription": string,
+     *     "responsemessage": string,
+     *     "sms": array{
+     *         "messageid": string,
+     *         "smsclientid": string,
+     *         "mobileno": string,
+     *         "status": string,
+     *         "errorcode": string,
+     *         "errordescription": string
+     *     }[]
+     * } $response_content
+     */
     private function throwAuthErrorIfNeeded(array $response_content): void
     {
         if ($response_content['responsecode'] == 0) {
@@ -66,23 +99,67 @@ class SenderService
         }
     }
 
+    /**
+     * @param array{
+     *     "responsecode": int,
+     *     "responsedescription": string,
+     *     "responsemessage": string,
+     *     "sms": array{
+     *         "messageid": string,
+     *         "smsclientid": string,
+     *         "mobileno": string,
+     *         "status": string,
+     *         "errorcode": string,
+     *         "errordescription": string
+     *     }[]
+     * } $response_content
+     */
     private function throwSmsErrorIfNeeded(array $response_content): void
     {
-        /** @var array */
+        /**
+         * @var array{
+         *      "messageid": string,
+         *      "smsclientid": string,
+         *      "mobileno": string,
+         *      "status": string,
+         *      "errorcode": string,
+         *      "errordescription": string
+         * }[]
+         */
         $sms = $response_content['sms'];
-        $sms_errors = array_filter($sms, function(array $item){
-            if($item['status'] == "error"){
+
+        /**
+         * @param array{
+         *      "messageid": string,
+         *      "smsclientid": string,
+         *      "mobileno": string,
+         *      "status": string,
+         *      "errorcode": string,
+         *      "errordescription": string
+         * } $item
+         * 
+         * @return string[]
+         */
+        $filterCallback = function ($item) {
+            if ($item['status'] == "error") {
                 return $item['mobileno'];
             }
-        });
+        };
+        /**
+         * @var string[]
+         */
+        $sms_errors = array_filter($sms, $filterCallback);
 
-        if(sizeof($sms_errors) > 0){
+        if (sizeof($sms_errors) > 0) {
             $this->nums_error = $sms_errors;
             $this->logger->error('Failure to send messages to certain numbers');
             throw new SendingFailureException("Failure to send messages to certain numbers");
         }
     }
 
+    /**
+     * @return string[]
+     */
     public function getNumsError(): array
     {
         return $this->nums_error;
@@ -90,7 +167,7 @@ class SenderService
 
     public function getBalance(): string
     {
-     
+
         $response = $this->httpClient->request(
             'POST',
             $this->config->getBalanceUrl(),
@@ -106,6 +183,24 @@ class SenderService
             ]
         );
 
+        /**
+         * @var array{
+         *     "responsecode": int,
+         *     "responsedescription": string,
+         *     "responsemessage": string,
+         *     "sms": array{
+         *         "messageid": string,
+         *         "smsclientid": string,
+         *         "mobileno": string,
+         *         "status": string,
+         *         "errorcode": string,
+         *         "errordescription": string
+         *     }[],
+         *     "accountexpdate": string,
+         *     "balanceexpdate": string,
+         *     "credit": int
+         * }
+         */
         $response_content = $response->toArray(false);
         $this->throwAuthErrorIfNeeded($response_content);
 

@@ -39,4 +39,9 @@ class SmsClient
     {
         return $this->sender->getBalance();
     }
+
+    public function getConfig(): Configuration
+    {
+        return $this->config;
+    }
 }
