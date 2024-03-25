@@ -11,7 +11,7 @@ To use the API, you need an account. Visit the official website https://nexah.ne
 Via composer
 ```bash
 $ composer require gladdle/nexah-sms
-```
+``` 
 
 ## Basic Usage
 ```php
@@ -83,6 +83,21 @@ $ NX_BAD_USER=username NX_GOOD_USER=username NX_PWD=password NX_GOOD_NUM=6777777
 - **NX_PWD** good password
 - **NX_GOOD_NUM** good number
 - **NX_BAD_NUM** invalid number like 10 digits
+
+## Logs
+You can stream logs messages by defining file path
+
+```php
+$client = new SmsClient(
+    new Configuration(
+        "username",
+        "password",
+        "senderId"
+        __DIR__ . '/var/logs.log'
+    )
+);
+
+```
 
 ### Author
 
